@@ -151,7 +151,7 @@ function playerWin() {
             ch = gType;
 
     }
-
+    console.log('ch = ' + ch);
     return ch;
 }
 
@@ -212,20 +212,25 @@ function oPlay() {
     if(end(clickedCell))
         return;
 
-    var randomO = new O();
-    for(var k = 0; ; k++) {
-        if((randomO.pos).equal(clickedCell[k].pos)) {
-            randomO = new O();
-            k = -1;
+//    var randomO = new O();
+    var nextO = findNext();
+    if(!nextO) {
+        nextO = new O();
+        for(var k = 0; ; k++) {
+            if((nextO.pos).equal(clickedCell[k].pos)) {
+                nextO = new O();
+                k = -1;
+            }
+            else if (k == clickedCell.length - 1)
+                break;
         }
-        else if (k == clickedCell.length - 1)
-            break;
     }
 
-    grid[randomO.pos.x][randomO.pos.y] = randomO;
-    grid[randomO.pos.x][randomO.pos.y].status = 'clicked';
 
-    var cssPos = ' .' + posToString(randomO.pos.x) + ' .' + posToString(randomO.pos.y);
+    grid[nextO.pos.x][nextO.pos.y] = nextO;
+    grid[nextO.pos.x][nextO.pos.y].status = 'clicked';
+
+    var cssPos = ' .' + posToString(nextO.pos.x) + ' .' + posToString(nextO.pos.y);
     var cell = document.querySelector(cssPos);
 
     cell.className += ' comClick';
@@ -236,6 +241,42 @@ function oPlay() {
     if(end(clickedCell))
         return;
 
+}
+
+function findNext() {
+    var newO;
+    ///
+    grid.forEach(function(row) {
+        var fr = row.filter(function(actor) {
+            return (actor.type == 'X');
+        });
+        if(fr.length == 2) {
+            row.forEach(function(actor) {
+                if(actor.status != 'clicked')
+                    newO = actor;
+                //return new Actor(actor.pos, 'O');
+            })
+        }
+    });
+    ///
+
+    for(var i = 0; i < 3; i++) {
+        var actor;
+        var m = 0, n = 0;
+        for(var j = 0; j < 3; j++) {
+            if(grid[j][i].status != 'clicked') {
+                actor = grid[j][i];
+                m++;
+            }
+            if(grid[j][i].type == 'X')
+                n++;
+        }
+        if(m == 1 && n == 2)
+            newO = actor;
+    }
+
+    if(newO) newO.type = 'O';
+    return newO;
 }
 
 function runGame() {
