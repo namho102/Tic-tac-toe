@@ -151,7 +151,7 @@ function playerWin() {
             ch = gType;
 
     }
-    console.log('ch = ' + ch);
+
     return ch;
 }
 
@@ -212,7 +212,6 @@ function oPlay() {
     if(end(clickedCell))
         return;
 
-//    var randomO = new O();
     var nextO = findNext();
     if(!nextO) {
         nextO = new O();
@@ -225,7 +224,6 @@ function oPlay() {
                 break;
         }
     }
-
 
     grid[nextO.pos.x][nextO.pos.y] = nextO;
     grid[nextO.pos.x][nextO.pos.y].status = 'clicked';
@@ -245,7 +243,7 @@ function oPlay() {
 
 function findNext() {
     var newO;
-    ///
+
     grid.forEach(function(row) {
         var fr = row.filter(function(actor) {
             return (actor.type == 'X');
@@ -258,7 +256,6 @@ function findNext() {
             })
         }
     });
-    ///
 
     for(var i = 0; i < 3; i++) {
         var actor;
@@ -275,6 +272,22 @@ function findNext() {
             newO = actor;
     }
 
+    var firstDia = [grid[0][0], grid[1][1], grid[2][2]];
+    var secondDia = [grid[0][2], grid[1][1], grid[2][0]];
+    var dia = [firstDia, secondDia];
+
+    dia.forEach(function(d) {
+        var fr = d.filter(function(actor) {
+            return (actor.type == 'X');
+        });
+        if(fr.length == 2) {
+            d.forEach(function(actor) {
+                if(actor.status != 'clicked')
+                    newO = actor;
+            })
+        }
+    });
+
     if(newO) newO.type = 'O';
     return newO;
 }
@@ -284,4 +297,4 @@ function runGame() {
 }
 
 runGame();
-
+//////////////////////////////////////////////////////////////////////////////
